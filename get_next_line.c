@@ -1,68 +1,75 @@
 #include "get_next_line.h"
 
-static char	*ft_strchr(const char *s, int c)
+static void ft_realloc(char **ptr1, char *ptr2)
 {
-	size_t	i;
-	size_t	slen;
-
-	if (!s)
-		return (NULL);
-	i = 0;
-	slen = ft_strlen(s);
-	while (i < slen + 1)
-	{
-		if (s[i] == (char)c)
-			return ((char *)&s[i]);
-		i++;
-	}
-	return (NULL);
-}
-
-static void	*ft_calloc(size_t nmemb, size_t size)
-{
-	void	*ptr;
-	char	*str;
-	int		i;
-
-	i = 0;
-	ptr = (void *)malloc(nmemb * size);
-	if (!ptr)
-		return (NULL);
-	str = (char *)ptr;
-	while (i < nmemb * size)
-	{
-		str[i] = 0;
-		i++;
-	}
-	return (ptr);
-}
-
-void	read_line(int fd, char *keep, char *text)
-{
-	char	*record;
-	char	buffer[BUFFER_SIZE + 1];
-	size_t	len;
-	size_t	i;
-
-	i = 0;
-	//if(keep)
-	//	record = ft_strdup(keep);
+	char	*temp;
+	size_t		i;
 	
+	i = 0;
+	temp = ft_calloc(ft_strlen(*ptr1) + 1, 1);
+	if (!temp)
+		return;
+	while((*ptr1)[i])
+		temp[i++] = (*ptr1)[i];
+	free(*ptr1);
+	*ptr1 = ft_strjoin(temp, ptr2);
+	free(temp);
+}
 
+static char	*read_line(int fd, char *keep, char **record)
+{
+	char	buffer[BUFFER_SIZE + 1];
+	char	*newline;
+	ssize_t	bytes;
 
-	text = ft_calloc(ft_strlen(record) - (ft_strchr(record, '\n') - record), 1);
+	if(keep)
+		*record = ft_strdup(keep);
+	else
+		*record = ft_strdup("");
+	while (!(newline = ft_strchr(*record, '\n')))
+	{
+		bytes = read(fd, buffer, BUFFER_SIZE);
+		if (bytes <= 0)
+			break;
+		buffer[bytes] = '\0';
+		ft_realloc(record, buffer);
+	}
+	return (newline);
+}
+
+static void	copy_record(char **text, char *record)
+{
+	size_t	i;
+
+	i = 0;
 	while (record[i] && record[i] != '\n')
-		text[i++] = record[i];
-	text[i] = '\n';
-	keep = ft_strdup(ft_strchr(record, '\n'));
-	free(record);
+		(*text)[i++] = record[i];
+	(*text)[i++] = '\n';
+	(*text)[i] = '\0';
 }
 
 char	*get_next_line(int fd)
 {
 	static char	*keep;
+	char	*newline;
 	char	*text;
+	char	*record;
+	size_t	i;
 
-	read_line(fd, keep, text);
-	return (text);
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	newline = read_line(fd, keep, &record);
+	if (!record || !*record)
+		return (free(record), NULL);
+	if (!newline)
+	{
+		text = ft_strdup(record);
+		keep = NULL;
+		return (free(record), text);
+	}
+	text = ft_calloc((newline - record) + 2, 1);
+	copy_record(&text, record);
+	free(keep);
+	keep = ft_strdup(newline + 1);
+	return (free(record), text);
 }

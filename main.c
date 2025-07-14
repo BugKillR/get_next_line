@@ -2,13 +2,21 @@
 #include <stdio.h>
 #include <fcntl.h>
 
+void    ft_read(int fd)
+{
+        char    *read;
+        read = get_next_line(fd);
+        printf("%s", read);
+        free(read);
+}
+
 int main(void)
 {
-    char    buffer[BUFFER_SIZE];
     int fd = open("Text.txt", O_RDWR, 0644);
 
-    printf("%s", get_next_line(fd));
-    printf("%s", get_next_line(fd));
+    ft_read(fd);
+    ft_read(fd);
+    ft_read(fd);
 
     return (0);
 }

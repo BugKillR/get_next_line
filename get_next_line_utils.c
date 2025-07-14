@@ -10,6 +10,43 @@ size_t	ft_strlen(const char *s)
 	return (i);
 }
 
+char	*ft_strchr(const char *s, int c)
+{
+	size_t	i;
+	size_t	slen;
+
+	if (!s)
+		return (NULL);
+	i = 0;
+	slen = ft_strlen(s);
+	while (i < slen + 1)
+	{
+		if (s[i] == (char)c)
+			return ((char *)&s[i]);
+		i++;
+	}
+	return (NULL);
+}
+
+void	*ft_calloc(size_t nmemb, size_t size)
+{
+	void	*ptr;
+	char	*str;
+	int		i;
+
+	i = 0;
+	ptr = (void *)malloc(nmemb * size);
+	if (!ptr)
+		return (NULL);
+	str = (char *)ptr;
+	while (i < nmemb * size)
+	{
+		str[i] = 0;
+		i++;
+	}
+	return (ptr);
+}
+
 char	*ft_strdup(const char *s)
 {
 	char	*ptr;
@@ -23,48 +60,6 @@ char	*ft_strdup(const char *s)
 		ptr[i] = s[i];
 	ptr[i] = '\0';
 	return (ptr);
-}
-
-char	*ft_substr(char const *s, unsigned int start, size_t len)
-{
-	char	*substr;
-	size_t	slen;
-	size_t	i;
-
-	if (!s)
-		return (NULL);
-	slen = ft_strlen(s);
-	if (start >= slen)
-		return (ft_strdup(""));
-	if (start + len > slen)
-		len = slen - start;
-	substr = (char *)malloc(len + 1);
-	if (!substr)
-		return (NULL);
-	i = 0;
-	while (i < len)
-	{
-		substr[i] = s[start + i];
-		i++;
-	}
-	substr[i] = '\0';
-	return (substr);
-}
-
-char	*ft_strchr(const char *s, int c)
-{
-	size_t	i;
-	size_t	slen;
-
-	i = 0;
-	slen = ft_strlen(s);
-	while (i < slen + 1)
-	{
-		if (s[i] == (char)c)
-			return ((char *)&s[i]);
-		i++;
-	}
-	return (NULL);
 }
 
 char	*ft_strjoin(char const *s1, char const *s2)
