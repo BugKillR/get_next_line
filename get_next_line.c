@@ -37,50 +37,32 @@ static void	*ft_calloc(size_t nmemb, size_t size)
 	return (ptr);
 }
 
-char	*read_line(int fd, char *keep)
+void	read_line(int fd, char *keep, char *text)
 {
+	char	*record;
 	char	buffer[BUFFER_SIZE + 1];
-	char	*text;
-	char	*tmp;
+	size_t	len;
 	size_t	i;
-	size_t	k;
 
-	i = 1;
-	if (!ft_strchr(keep, '\n'))
-	{
-		
-	}
-	else
-	{
-		split_line();
-	}
-
+	i = 0;
+	//if(keep)
+	//	record = ft_strdup(keep);
 	
-	// while (!ft_strchr(keep, '\n'))
-	// {
-	// 	text = ft_calloc((i++ * (BUFFER_SIZE) + 1), 1);
-	// 	read(fd, buffer, BUFFER_SIZE);
-	// 	ft_strjoin(text, buffer);
-	// }
-	
-	return (tmp);
-}
 
-char	*split_line(int fd, char *keep)
-{
 
+	text = ft_calloc(ft_strlen(record) - (ft_strchr(record, '\n') - record), 1);
+	while (record[i] && record[i] != '\n')
+		text[i++] = record[i];
+	text[i] = '\n';
+	keep = ft_strdup(ft_strchr(record, '\n'));
+	free(record);
 }
 
 char	*get_next_line(int fd)
 {
 	static char	*keep;
-	char	buffer[BUFFER_SIZE + 1];
-	char	*newline;
-	ssize_t	bytes;
+	char	*text;
 
-	if (ft_strchr(keep, '\n'))
-		split_line(fd, keep, newline);
-	else
-		read_line(fd, keep);
+	read_line(fd, keep, text);
 	return (text);
 }
