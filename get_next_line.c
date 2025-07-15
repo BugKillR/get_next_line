@@ -1,15 +1,15 @@
 #include "get_next_line.h"
 
-static void ft_realloc(char **ptr1, char *ptr2)
+static void	ft_realloc(char **ptr1, char *ptr2)
 {
 	char	*temp;
-	size_t		i;
-	
+	size_t	i;
+
 	i = 0;
 	temp = ft_calloc(ft_strlen(*ptr1) + 1, 1);
 	if (!temp)
-		return;
-	while((*ptr1)[i])
+		return ;
+	while ((*ptr1)[i])
 		temp[i++] = (*ptr1)[i];
 	free(*ptr1);
 	*ptr1 = ft_strjoin(temp, ptr2);
@@ -22,15 +22,16 @@ static char	*read_line(int fd, char *keep, char **record)
 	char	*newline;
 	ssize_t	bytes;
 
-	if(keep)
+	if (keep)
 		*record = ft_strdup(keep);
 	else
 		*record = ft_strdup("");
-	while (!(newline = ft_strchr(*record, '\n')))
+	newline = ft_strchr(*record, '\n');
+	while (!newline)
 	{
 		bytes = read(fd, buffer, BUFFER_SIZE);
 		if (bytes <= 0)
-			break;
+			break ;
 		buffer[bytes] = '\0';
 		ft_realloc(record, buffer);
 	}
@@ -51,10 +52,10 @@ static void	copy_record(char **text, char *record)
 char	*get_next_line(int fd)
 {
 	static char	*keep;
-	char	*newline;
-	char	*text;
-	char	*record;
-	size_t	i;
+	char		*newline;
+	char		*text;
+	char		*record;
+	size_t		i;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
@@ -64,12 +65,13 @@ char	*get_next_line(int fd)
 	if (!newline)
 	{
 		text = ft_strdup(record);
-		keep = NULL;
+		free(keep);
 		return (free(record), text);
 	}
 	text = ft_calloc((newline - record) + 2, 1);
 	copy_record(&text, record);
 	free(keep);
-	keep = ft_strdup(newline + 1);
+	if (!newline)
+		keep = ft_strdup(newline + 1);
 	return (free(record), text);
 }
