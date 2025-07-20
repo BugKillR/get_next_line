@@ -91,7 +91,7 @@ char	*get_next_line(int fd)
 			return (free(keep), NULL);
 	}
 	if (keep && !*text && BUFFER_SIZE > 2)
-		return (free(keep), NULL);
+		return (free(keep), free(text), NULL);
 	if (!ft_readline(fd, &newline, &text, &keep))
 		return (free(text), NULL);
 	if(!ft_splitfromnew(&text, newline, &keep))
