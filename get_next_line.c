@@ -52,15 +52,33 @@ static int ft_splitfromnew(char **text, char *newline, char **keep)
 	return (1);
 }
 
-#include <stdio.h>
+static int	ft_readline(int fd, char **newline, char **text, char **keep)
+{
+	ssize_t		bytes_read;
+	char		*buffer;
+
+	free(*keep);
+	while (!(*newline = ft_strchr(*text, '\n')))
+	{
+		buffer = ft_calloc(BUFFER_SIZE + 1, 1);
+		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		if (bytes_read <= 0)
+		{
+			free(buffer);
+			return (0);
+		}
+		ft_realloc(&*text, buffer);
+		free(buffer);	
+	}
+	return (1);
+}
+
 
 char	*get_next_line(int fd)
 {
 	static char	*keep;
-	char		*buffer;
 	char		*text;
 	char		*newline;
-	ssize_t		bytes_read;
 
 	if (fd < 0 || fd > 1023 || BUFFER_SIZE <= 0)
 		return (NULL);
@@ -74,16 +92,8 @@ char	*get_next_line(int fd)
 	}
 	if (keep && !*text && BUFFER_SIZE > 2)
 		return (free(keep), NULL);
-	free(keep);
-	while (!(newline = ft_strchr(text, '\n')))
-	{
-		buffer = ft_calloc(BUFFER_SIZE + 1, 1);
-		bytes_read = read(fd, buffer, BUFFER_SIZE);
-		if (bytes_read <= 0)
-			return (free(buffer), free(text), NULL);
-		ft_realloc(&text, buffer);
-		free(buffer);	
-	}
+	if (!ft_readline(fd, &newline, &text, &keep))
+		return (free(text), NULL);
 	if(!ft_splitfromnew(&text, newline, &keep))
 		return (free(keep), NULL);
 	return (text);
