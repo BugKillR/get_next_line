@@ -72,15 +72,15 @@ char	*get_next_line(int fd)
 		if (!text)
 			return (free(keep), NULL);
 	}
-	if (keep && !*text)
-		return (NULL);
+	if (keep && !*text && BUFFER_SIZE > 2)
+		return (free(keep), NULL);
 	free(keep);
 	while (!(newline = ft_strchr(text, '\n')))
 	{
 		buffer = ft_calloc(BUFFER_SIZE + 1, 1);
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
 		if (bytes_read <= 0)
-			return (free(buffer), free(text), free(keep), NULL);
+			return (free(buffer), free(text), NULL);
 		ft_realloc(&text, buffer);
 		free(buffer);	
 	}

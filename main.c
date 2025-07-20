@@ -2,23 +2,17 @@
 #include <stdio.h>
 #include <fcntl.h>
 
-static void ft_read(int fd)
-{
-        char    *read;
-        read = get_next_line(fd);
-        printf("%s", read);
-        free(read);
-}
-
 int main(void)
 {
+    char    *read;
     int fd = open("Text.txt", O_RDWR, 0644);
 
-    ft_read(fd);
-    ft_read(fd);
-    ft_read(fd);
-    ft_read(fd);
-    ft_read(fd);
+    read = NULL;
+    while(read = get_next_line(fd))
+    {
+        printf("%s", read);
+        free(read);
+    }
 
     return (0);
 }
